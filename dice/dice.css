@@ -1,0 +1,18 @@
+div.die{
+    display:inline-block;
+    width:40px;
+    height:40px;
+    line-height: 40px;
+    border:2px solid;
+    text-align:center;
+}
+
+div.die span{
+    line-height: normal;
+    vertical-align:middle;
+    display:inline-block;
+}
+
+div.buttons{
+    padding:5px;
+}
