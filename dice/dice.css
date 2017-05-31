@@ -5,6 +5,7 @@ div.die{
     line-height: 40px;
     border:2px solid;
     text-align:center;
+    margin:5px;
 }
 
 div.die span{
@@ -15,4 +16,9 @@ div.die span{
 
 div.buttons{
     padding:5px;
+}
+
+div.buttons button{
+    padding:5px;
+    margin:5px;
 }

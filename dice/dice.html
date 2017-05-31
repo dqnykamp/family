@@ -3,15 +3,28 @@
 <head>
 <meta charset="utf-8"/>
 <link href="dice.css" rel="stylesheet" type="text/css"/>
-<script src="dice.js"></script>
+<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+<!--<script type="text/javascript"
+src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.5/jsxgraphcore.js"></script>-->
+<script type="text/javascript" src="//unpkg.com/asynchronous-interactive"></script>
 <title>Interesting Dice!</title>
 </head>
 <body>
 <h3>Interesting Dice!</h3>
-<div>
-    <div class="die"><span id="d1"></span></div>
-    <div class="die"><span id="d2"></span></div>
+<div class="asynchronous-interactive" data-src="dice.js"></div>
+<!--<div>
+    <div class="die" style="color:Red"><span id="d1"></span></div><div class="die" style="color:Blue"><span id="d2"></span></div>
 </div>
-<div class="buttons"><button onclick="roll();">Roll!</button></div>
+<!--<div class="buttons">
+    <button onclick="roll();">Roll!</button>
+    <button onclick="roll(10);">Roll 10 times!</button>
+    <button onclick="roll(100);">Roll 100 times!</button> <br/>
+    <button onclick="reset();">Reset</button>
+    <button id="toggle" onclick="toggleAxis();">Show fractions</button></div>
+<div id="box1" class="jxgbox" style="width:200px; height:200px; display:inline-block;"></div>
+<div id="box2" class="jxgbox" style="width:200px; height:200px; display:inline-block;"></div>
+<div id="box3" class="jxgbox" style="width:400px; height:200px;"></div>
+
+<script src="dice.js"></script>-->
 </body>
 </html>
