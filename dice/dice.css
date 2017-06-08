@@ -22,3 +22,35 @@ div.buttons button{
     padding:5px;
     margin:5px;
 }
+
+table.countChart {
+    border-collapse:collapse;
+    width:400px;
+    table-layout: fixed;
+    font-size: small;
+}
+
+table.countChart thead tr th{
+    border-bottom: solid 1px;
+}
+
+table.countChart th:first-child{
+    text-align:right;
+    padding-right:5px;
+    border-right:solid 1px;
+    width: 20%;
+}
+
+table.countChart tbody th:last-child{
+    text-align:right;
+}
+
+table.countChart th:last-child{
+    border-left:solid 1px;
+}
+
+table.countChart td{
+    text-align: center;
+}
+
+
