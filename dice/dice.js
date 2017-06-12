@@ -1,5 +1,4 @@
 define(['div', 'jquery', 'jsxgraph', 'db'], function(div, $, JXG, db) {
-
 "use strict";
     
 var maxVal = 6;
@@ -8,7 +7,7 @@ var f_historyRed, f_historyBlue, f_historySum;
 var historyRed, historyBlue, historySum;
 
 var $div = $(div);
-var d1, d2, t1counts, t1fracs, t2counts, t2fracs;
+var d1, d2, tRcounts, tRfracs, tBcounts, tBfracs, tScounts, tSfracs;
 var toggleButton;
 
 var yHighBuffer = 1.4;
@@ -21,7 +20,6 @@ var Asum;
 var a,b;
     
 db.on("reset", function (){
-    console.log("reseting");
     var nRolls = 0;
     historyRed = [];
     historyBlue = [];
@@ -49,13 +47,10 @@ db.on("reset", function (){
 
 });
 
-if (!db.historyRed===null || db.historyRed.length != maxVal) {
-    console.log('to clear');
+if (!db.historyRed || db.historyRed.length != maxVal) {
     db.clear();
-    console.log('cleared');
 }
 else {
-    console.log("didn't clear");
     historyRed=db.historyRed;
     historyBlue=db.historyBlue;
     historySum=db.historySum;
@@ -81,7 +76,6 @@ function assign_db_from_vars() {
 }
     
 function setupChartFunctions () {
-    console.log("setting up");
     
     var i;
     f_historyRed = [];
@@ -129,51 +123,77 @@ function setupHTML () {
 
     $('<div id="box1" class="jxgbox" style="width:200px; height:200px; display:inline-block; border:none;"></div><div id="box2" class="jxgbox" style="width:200px; height:200px; display:inline-block; border:none;"></div><div id="box3" class="jxgbox" style="width:400px; height:200px; border:none;"></div>').appendTo($div);
 
-    var t1 = $('<table class="countChart"/>');
-    var t1r1 = $('<tr></tr>');
-    var t1r2 = $('<tr></tr>');
-    var t1r3 = $('<tr></tr>');
-    var t2 = $('<table class="countChart"/>');
-    var t2r1 = $('<tr></tr>');
-    var t2r2 = $('<tr></tr>');
-    var t2r3 = $('<tr></tr>');
-    t1r1.append('<th>Red</th>');
-    t1r2.append('<th>Count</th>');
-    t1r3.append('<th>Fraction</th>');
-    t2r1.append('<th>Blue</th>');
-    t2r2.append('<th>Count</th>');
-    t2r3.append('<th>Fraction</th>');
-    t1counts = [];
-    t1fracs = [];
-    t2counts = [];
-    t2fracs = [];
+    var tR = $('<table class="countChart"/>');
+    var tRr1 = $('<tr></tr>');
+    var tRr2 = $('<tr></tr>');
+    var tRr3 = $('<tr></tr>');
+    var tB = $('<table class="countChart"/>');
+    var tBr1 = $('<tr></tr>');
+    var tBr2 = $('<tr></tr>');
+    var tBr3 = $('<tr></tr>');
+    tRr1.append('<th>Red</th>');
+    tRr2.append('<th>Count</th>');
+    tRr3.append('<th>Fraction</th>');
+    tBr1.append('<th>Blue</th>');
+    tBr2.append('<th>Count</th>');
+    tBr3.append('<th>Fraction</th>');
+    tRcounts = [];
+    tRfracs = [];
+    tBcounts = [];
+    tBfracs = [];
     for(var i = 0; i<maxVal; i++){
-        t1counts.push($('<td></td>'));
-        t1fracs.push($('<td></td>'));
-        t1r1.append('<th>'+(i+1)+'</th>');
-        t1r2.append(t1counts[i]);
-        t1r3.append(t1fracs[i]);
-        t2counts.push($('<td></td>'));
-        t2fracs.push($('<td></td>'));
-        t2r1.append('<th>'+(i+1)+'</th>');
-        t2r2.append(t2counts[i]);
-        t2r3.append(t2fracs[i]);
+        tRcounts.push($('<td></td>'));
+        tRfracs.push($('<td></td>'));
+        tRr1.append('<th>'+(i+1)+'</th>');
+        tRr2.append(tRcounts[i]);
+        tRr3.append(tRfracs[i]);
+        tBcounts.push($('<td></td>'));
+        tBfracs.push($('<td></td>'));
+        tBr1.append('<th>'+(i+1)+'</th>');
+        tBr2.append(tBcounts[i]);
+        tBr3.append(tBfracs[i]);
     }
-    t1r1.append('<th>total</th>')
-    t1counts.push($('<th></th>'));
-    t1r2.append(t1counts[maxVal]);
-    t1r3.append('<th>1</th>');
-    t1.append($('<thead/>').append(t1r1));
-    t1.append($('<tbody>').append(t1r2).append(t1r3));
-    t1.appendTo($div);
+    tRr1.append('<th>total</th>');
+    tRcounts.push($('<th></th>'));
+    tRr2.append(tRcounts[maxVal]);
+    tRr3.append('<th>1</th>');
+    tR.append($('<thead/>').append(tRr1));
+    tR.append($('<tbody>').append(tRr2).append(tRr3));
+    tR.appendTo($div);
 
-    t2r1.append('<th>total</th>')
-    t2counts.push($('<th>0</th>'));
-    t2r2.append(t2counts[maxVal]);
-    t2r3.append('<th>1</th>');
-    t2.append($('<thead/>').append(t2r1));
-    t2.append($('<tbody>').append(t2r2).append(t2r3));
-    t2.appendTo($div);
+    tBr1.append('<th>total</th>');
+    tBcounts.push($('<th>0</th>'));
+    tBr2.append(tBcounts[maxVal]);
+    tBr3.append('<th>1</th>');
+    tB.append($('<thead/>').append(tBr1));
+    tB.append($('<tbody>').append(tBr2).append(tBr3));
+    tB.appendTo($div);
+    
+    var tS = $('<table class="countChart" style="width: 600px"/>');
+    var tSr1 = $('<tr></tr>');
+    var tSr2 = $('<tr></tr>');
+    var tSr3 = $('<tr></tr>');
+    tSr1.append('<th>Sum</th>');
+    tSr2.append('<th>Count</th>');
+    tSr3.append('<th>Fraction</th>');
+    tScounts = [];
+    tSfracs = [];
+    
+    for(var i = 0; i<2*maxVal; i++){
+        tScounts.push($('<td></td>'));
+        tSfracs.push($('<td></td>'));
+        tSr1.append('<th>'+(i+1)+'</th>');
+        tSr2.append(tScounts[i]);
+        tSr3.append(tSfracs[i]);
+    }
+    
+    tSr1.append('<th>total</th>');
+    tScounts.push($('<th></th>'));
+    tSr2.append(tScounts[2*maxVal]);
+    tSr3.append('<th>1</th>');
+    tS.append($('<thead/>').append(tSr1));
+    tS.append($('<tbody>').append(tSr2).append(tSr3));
+    tS.appendTo($div);
 }
 
 function setupJSX () {
@@ -250,7 +270,6 @@ db.on("change", function (){
     d2.html(db.n2);
     
     if(!historyRed || !historyBlue || !historySum || historyRed.length != maxVal || historyBlue.length != maxVal || historySum.length != 2*maxVal) {
-        console.log("ignore change for now");
         return;
     }
     
@@ -266,18 +285,28 @@ db.on("change", function (){
     board3.update();
     
     for(var i = 0; i<maxVal; i++) {
-        t1counts[i].html(db.historyRed[i]);
-        t2counts[i].html(db.historyBlue[i]);
+        tRcounts[i].html(db.historyRed[i]);
+        tBcounts[i].html(db.historyBlue[i]);
         if (db.nRolls == 0) {
-            t1fracs[i].html("");
-            t2fracs[i].html("");
+            tRfracs[i].html("");
+            tBfracs[i].html("");
         } else {
-            t1fracs[i].html((db.historyRed[i]/db.nRolls).toFixed(3));
-            t2fracs[i].html((db.historyBlue[i]/db.nRolls).toFixed(3));
+            tRfracs[i].html((db.historyRed[i]/db.nRolls).toFixed(3));
+            tBfracs[i].html((db.historyBlue[i]/db.nRolls).toFixed(3));
         }
     }
-    t1counts[maxVal].html(db.nRolls);
-    t2counts[maxVal].html(db.nRolls);
+    tRcounts[maxVal].html(db.nRolls);
+    tBcounts[maxVal].html(db.nRolls);
+    
+    for(var i = 0; i<2*maxVal; i++) {
+        tScounts[i].html(db.historySum[i]);
+        if (db.nRolls == 0) {
+            tSfracs[i].html("");
+        } else {
+            tSfracs[i].html((db.historySum[i]/db.nRolls).toFixed(3));
+        }
+    }
+    tScounts[2*maxVal].html(db.nRolls);
 });
     
 function roll(n) {
@@ -365,13 +394,13 @@ function resizeBoards() {
     board3.update();
     
     for(var i = 0; i<maxVal; i++) {
-        t1counts[i].html(historyRed[i]);
-        t1fracs[i].html((historyRed[i]/nRolls).toFixed(3));
-        t2counts[i].html(historyBlue[i]);
-        t2fracs[i].html((historyBlue[i]/nRolls).toFixed(3));
+        tRcounts[i].html(historyRed[i]);
+        tRfracs[i].html((historyRed[i]/nRolls).toFixed(3));
+        tBcounts[i].html(historyBlue[i]);
+        tBfracs[i].html((historyBlue[i]/nRolls).toFixed(3));
     }
-    t1counts[maxVal].html(nRolls);
-    t2counts[maxVal].html(nRolls);
+    tRcounts[maxVal].html(nRolls);
+    tBcounts[maxVal].html(nRolls);
 }
     
 function old_reset() {
@@ -409,13 +438,13 @@ function old_reset() {
     board3.update();
     
     for(var i = 0; i<maxVal; i++) {
-        t1counts[i].html(0);
-        t1fracs[i].html("");
-        t2counts[i].html(0);
-        t2fracs[i].html("");
+        tRcounts[i].html(0);
+        tRfracs[i].html("");
+        tBcounts[i].html(0);
+        tBfracs[i].html("");
     }
-    t1counts[maxVal].html(0);
-    t2counts[maxVal].html(0);
+    tRcounts[maxVal].html(0);
+    tBcounts[maxVal].html(0);
     
 
     
