@@ -14,6 +14,7 @@ var yHighBuffer = 1.4;
 var yLowBuffer = -0.3;
 
 var board1, board2, board3;
+var yax1, yax2, yax3;
     
 var Asum;
     
@@ -99,6 +100,8 @@ function setupChartFunctions () {
 }
 
 function setupHTML () {
+
+    // graphics of dice
     d1 = $('<span id="d1"/>');
     d2 = $('<span id="d2"/>');
     var d1Div = $('<div class="die" style="color:Red"/>');
@@ -108,11 +111,12 @@ function setupHTML () {
     d2Div.appendTo($div);
     d2.appendTo(d2Div);
 
+    // buttons
     var buttonDiv = $('<div class="buttons"/>');
     buttonDiv.append($('<button>Roll!</button>').click(function () {roll();}));
     buttonDiv.append($('<button>Roll 10 times!</button>').click(function () {roll(10);}));
     buttonDiv.append($('<button>Roll 100 times!</button>').click(function () {roll(100);}));
-    buttonDiv.append($('<button>Roll 10000 times!</button>').click(function () {roll(10000);}));
+    //buttonDiv.append($('<button>Roll 10000 times!</button>').click(function () {roll(10000);}));
     buttonDiv.appendTo($div);
 
     buttonDiv.append("<br/>")
@@ -121,8 +125,13 @@ function setupHTML () {
     toggleButton = $('<button id="toggle">Show fractions</button>').click(function (){db.showCounts= !db.showCounts;});
     toggleButton.appendTo(buttonDiv);
 
-    $('<div id="box1" class="jxgbox" style="width:200px; height:200px; display:inline-block; border:none;"></div><div id="box2" class="jxgbox" style="width:200px; height:200px; display:inline-block; border:none;"></div><div id="box3" class="jxgbox" style="width:400px; height:200px; border:none;"></div>').appendTo($div);
+    // divs for graphs
+    var graphR = $('<div id="box1" class="jxgbox" style="width:300px; height:200px; border:none;"></div>');
+    var graphB = $('<div id="box2" class="jxgbox" style="width:300px; height:200px; border:none;"></div>');
+    var graphS = $('<div id="box3" class="jxgbox" style="width:400px; height:200px; border:none;"></div>')
 
+
+    // tables
     var tR = $('<table class="countChart"/>');
     var tRr1 = $('<tr></tr>');
     var tRr2 = $('<tr></tr>');
@@ -159,7 +168,6 @@ function setupHTML () {
     tRr3.append('<th>1</th>');
     tR.append($('<thead/>').append(tRr1));
     tR.append($('<tbody>').append(tRr2).append(tRr3));
-    tR.appendTo($div);
 
     tBr1.append('<th>total</th>');
     tBcounts.push($('<th>0</th>'));
@@ -167,9 +175,8 @@ function setupHTML () {
     tBr3.append('<th>1</th>');
     tB.append($('<thead/>').append(tBr1));
     tB.append($('<tbody>').append(tBr2).append(tBr3));
-    tB.appendTo($div);
     
-    var tS = $('<table class="countChart" style="width: 600px"/>');
+    var tS = $('<table class="countChart" style="width: 500px"/>');
     var tSr1 = $('<tr></tr>');
     var tSr2 = $('<tr></tr>');
     var tSr3 = $('<tr></tr>');
@@ -193,26 +200,37 @@ function setupHTML () {
     tSr3.append('<th>1</th>');
     tS.append($('<thead/>').append(tSr1));
     tS.append($('<tbody>').append(tSr2).append(tSr3));
-    tS.appendTo($div);
+
+    
+
+    // append graphs and tables
+    var Rdiv = $('<div style="display:inline-block; margin-right: 20px;"></div>');
+    var Bdiv = $('<div style="display:inline-block;"></div>');
+    var Sdiv = $('<div></div>');
+    Rdiv.append(graphR).append(tR);
+    Bdiv.append(graphB).append(tB);
+    Sdiv.append(graphS).append(tS);
+
+    Rdiv.appendTo($div);
+    Bdiv.appendTo($div);
+    Sdiv.appendTo($div);
 }
 
 function setupJSX () {
     JXG.Options.board.ShowCopyright=false;
     JXG.Options.axis.ticks.majorHeight=20;
-
+    JXG.Options.text.display = 'internal';
+    
     board1 = JXG.JSXGraph.initBoard('box1', {boundingbox: [-1, yHighBuffer, 7, yLowBuffer], axis:false, showNavigation:false, pan:{enabled:false}});
     board2 = JXG.JSXGraph.initBoard('box2', {boundingbox: [-1, yHighBuffer, 7, yLowBuffer], axis:false, showNavigation:false, pan:{enabled:false}});
     board3 = JXG.JSXGraph.initBoard('box3', {boundingbox: [-1, yHighBuffer, 13, yLowBuffer], axis:false, showNavigation:false, pan:{enabled:false}});
 
     var xax1 = board1.create('axis', [[0, 0], [1, 0]], {straightFirst: false, name:"Number", withLabel:true, label:{position:"top", offset:[-10,-20]}, ticks:{label:{offset:[-4,-9]}}});
-    var yax1 = board1.create('axis', [[0, 0], [0, 1]], {straightFirst: false, name:"Count", withLabel:true, label:{position:"top"}});
+    yax1 = board1.create('axis', [[0, 0], [0, 1]], {straightFirst: false, name:"Count", withLabel:true, label:{position:"top", rotate: 90, offset: [-10,-10]}});
     var xax2 = board2.create('axis', [[0, 0], [1, 0]], {straightFirst: false, name:"Number", withLabel:true, label:{position:"top", offset:[-10,-20]}, ticks:{label:{offset:[-4,-9]}}});
-    var yax2 = board2.create('axis', [[0, 0], [0, 1]], {straightFirst: false});
+    yax2 = board2.create('axis', [[0, 0], [0, 1]], {straightFirst: false, name:"Count", withLabel:true, label:{position:"top", rotate: 90, offset: [-10,-10]}});
     var xax3 = board3.create('axis', [[0, 0], [1, 0]], {straightFirst: false, name:"Sum", withLabel:true, label:{position:"top", offset:[-10,-20]}, ticks:{label:{offset:[-4,-9]}}});
-    var yax3 = board3.create('axis', [[0, 0], [0, 1]], {straightFirst: false});
-
-    //var trot = board1.create('transform', [Math.PI/2, 1, 2], {type:"rotate"});
-    //trot.bindTo(yax1.label);
+    yax3 = board3.create('axis', [[0, 0], [0, 1]], {straightFirst: false, name:"Count", withLabel:true, label:{position:"top", rotate: 90, offset: [-10,-10]}});
 
     var chartR = board1.create('chart', [f_historyRed],{chartStyle:'bar', width:0.9, color:"red"});
     var chartB = board2.create('chart', [f_historyBlue],{chartStyle:'bar', width:0.9, color:"blue"});
@@ -275,8 +293,14 @@ db.on("change", function (){
     
     if(db.showCounts){
         toggleButton.html("Show fractions");
+	yax1.name = "Counts";
+	yax2.name = "Counts";
+	yax3.name = "Counts";
     } else {
         toggleButton.html("Show counts");
+	yax1.name = "Fractions";
+	yax2.name = "Fractions";
+	yax3.name = "Fractions";
     }
     resizeBoards();
     
@@ -291,8 +315,8 @@ db.on("change", function (){
             tRfracs[i].html("");
             tBfracs[i].html("");
         } else {
-            tRfracs[i].html((db.historyRed[i]/db.nRolls).toFixed(3));
-            tBfracs[i].html((db.historyBlue[i]/db.nRolls).toFixed(3));
+            tRfracs[i].html((db.historyRed[i]/db.nRolls).toFixed(2));
+            tBfracs[i].html((db.historyBlue[i]/db.nRolls).toFixed(2));
         }
     }
     tRcounts[maxVal].html(db.nRolls);
@@ -303,7 +327,7 @@ db.on("change", function (){
         if (db.nRolls == 0) {
             tSfracs[i].html("");
         } else {
-            tSfracs[i].html((db.historySum[i]/db.nRolls).toFixed(3));
+            tSfracs[i].html((db.historySum[i]/db.nRolls).toFixed(2));
         }
     }
     tScounts[2*maxVal].html(db.nRolls);
