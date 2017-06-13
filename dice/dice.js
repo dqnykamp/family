@@ -284,6 +284,21 @@ db.on("change", function (){
     historyBlue=db.historyBlue;
     historySum=db.historySum;
 
+    draw(db.roll_sequence);
+
+});
+   
+
+function draw(roll_sequence) {
+    if(roll_sequence && roll_sequence[0].length > 1) {
+	d1.html(roll_sequence[0][0]);
+	d2.html(roll_sequence[1][0]);
+	roll_sequence[0].splice(0,1);
+	roll_sequence[1].splice(0,1);
+	setTimeout(function () { draw(roll_sequence);}, 10);
+	return;
+    }
+    
     d1.html(db.n1);
     d2.html(db.n2);
     
@@ -331,13 +346,15 @@ db.on("change", function (){
         }
     }
     tScounts[2*maxVal].html(db.nRolls);
-});
+}
     
 function roll(n) {
     if (n === undefined) {
         n = 1;
     }
     var n1, n2, nRolls=db.nRolls;
+    var roll_sequence = [[],[]];
+    
     for (var j = 0; j<n; j++){
         var random = Math.random();
         for (var i = 0; i<maxVal*maxVal; i++){
@@ -353,9 +370,18 @@ function roll(n) {
         historyBlue[n2-1]+=1;
         historySum[n1+n2-1]+=1;
         nRolls+=1;
-    }
 
+	roll_sequence[0][j] = n1;
+	roll_sequence[1][j] = n2;
+	
+    }
     assign_db_from_vars();
+
+    if(n > 1) {
+	db.roll_sequence = roll_sequence;
+	db.roll_sequence = null;
+    }
+    
     db.nRolls=nRolls;
     db.n1 = n1;
     db.n2 = n2;
@@ -376,6 +402,14 @@ function resizeBoards() {
             yMax2=Math.max(yMax2,f_historyBlue[i]());
         }
 
+
+	if(yMax1 == 0) {
+	    yMax1 = 1;
+	}
+	if(yMax2 == 0) {
+	    yMax2 = 1;
+	}
+	
         board1.setBoundingBox([-1, yHighBuffer*yMax1, 7, yLowBuffer*yMax1]);
         board2.setBoundingBox([-1, yHighBuffer*yMax2, 7, yLowBuffer*yMax2]);
 
@@ -383,109 +417,12 @@ function resizeBoards() {
         for(var i = 1; i<2*maxVal; i++) {
             yMax1=Math.max(yMax1,f_historySum[i]());
         }
+	if(yMax1 == 0) {
+	    yMax1 = 1;
+	}
+	
         board3.setBoundingBox([-1, yHighBuffer*yMax1, 13, yLowBuffer*yMax1]);
     }
 }
-
-/*function old_roll(n) {
-    if (n === undefined) {
-        n = 1;
-    }
-    
-    for (var j = 0; j<n; j++){
-        var random = Math.random();
-        for (var i = 0; i<maxVal*maxVal; i++){
-            if(random <= Asum[i]) {
-                db.n1=Math.floor(i/maxVal)+1;
-                db.n2=i % maxVal+1;
-                break;
-            }
-        }
-        
-        historyRed[db.n1-1]+=1;
-        historyBlue[db.n2-1]+=1;
-        historySum[db.n1+db.n2-1]+=1;
-        nRolls+=1;
-    }
-    
-    d1.html(db.n1);
-    d2.html(db.n2);
-    
-    resizeBoards();
-    
-    board1.update();
-    board2.update();
-    board3.update();
-    
-    for(var i = 0; i<maxVal; i++) {
-        tRcounts[i].html(historyRed[i]);
-        tRfracs[i].html((historyRed[i]/nRolls).toFixed(3));
-        tBcounts[i].html(historyBlue[i]);
-        tBfracs[i].html((historyBlue[i]/nRolls).toFixed(3));
-    }
-    tRcounts[maxVal].html(nRolls);
-    tBcounts[maxVal].html(nRolls);
-}
-    
-function old_reset() {
-
-    historyRed = [];
-    historyBlue = [];
-    historySum = [];
-    f_historyRed = [];
-    f_historyBlue = [];
-    f_historySum = [];
-    nRolls = 1;
-    
-    for(var i = 0; i<maxVal; i++) {
-        historyRed.push(0);
-        historyBlue.push(0);
-        (function () {
-            var j=i;    
-            f_historyRed.push(function(){if(showCounts){return historyRed[j];}else{return historyRed[j]/nRolls;}});
-            f_historyBlue.push(function(){if(showCounts){return historyBlue[j];}else{return historyBlue[j]/nRolls;}});
-        })();
-    }
-
-    for (var i = 0; i<2*maxVal; i++) {
-        historySum.push(0);
-        (function () {
-            var j=i;    
-            f_historySum.push(function(){if(showCounts){return historySum[j];}else{return historySum[j]/nRolls;}});
-        })();
-    }
-    
-    nRolls = 0;
-    
-    board1.update();
-    board2.update();
-    board3.update();
-    
-    for(var i = 0; i<maxVal; i++) {
-        tRcounts[i].html(0);
-        tRfracs[i].html("");
-        tBcounts[i].html(0);
-        tBfracs[i].html("");
-    }
-    tRcounts[maxVal].html(0);
-    tBcounts[maxVal].html(0);
-    
-
-    
-    resizeBoards();
-    
-    d1.html("");
-    d2.html("");
-}
-    
-function toggleAxis_old() {
-    showCounts = !showCounts;
-    if(showCounts){
-        toggleButton.html("Show fractions");
-    } else {
-        toggleButton.html("Show counts");
-    }
-    resizeBoards();
-}*/
 
 });
